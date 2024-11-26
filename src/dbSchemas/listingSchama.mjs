@@ -19,7 +19,7 @@ const listingSchama = new mongoose.Schema({
         required: true
     },
     rating:{
-        type: mongoose.Schema.Types.Decimal128
+        type: mongoose.Schema.Types.Number
     },
     review:{
         type: mongoose.Schema.Types.String

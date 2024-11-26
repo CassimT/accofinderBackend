@@ -33,8 +33,9 @@ const listingDataValidation = {
           errorMessage: "available cannot be empty" 
          }
     },
-    rating: {
-        isDecimal: { 
+    rating: {   
+        isInt: { 
+          options: { min: 0, max: 5 },
          errorMessage: "rating must be a decimal" 
       },
         notEmpty: { 

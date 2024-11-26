@@ -62,9 +62,11 @@ router.get("/api/listings/:id", async (req, res) => {
 });
 
 // Endpoint for updating listing by ID
-router.put("/api/listings/:id", async (req, res) => {
+router.put("/api/listings/:id", upload.none(),  async (req, res) => {
+  const {params:{id},body} = req
+  console.log(body)
   try {
-    const updatedListing = await Listings.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const updatedListing = await Listings.findByIdAndUpdate(id, body, { new: true });
     if (!updatedListing) return res.status(404).json({ error: "Listing not found" });
     res.status(200).json(updatedListing);
   } catch (error) {

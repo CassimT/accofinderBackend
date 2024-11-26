@@ -10,16 +10,22 @@ import { Listings } from "./dbSchemas/listingSchama.mjs";
 // Initialize the app
 const app = express();
 
-// Database connection
+const dbUrl = "mongodb+srv://bedcom2422:9HWIcSeM7AyppOJE@cluster0.ckivv.mongodb.net/accofinder?retryWrites=true&w=majority";
+const connectionParameters = () => ({
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
+
 mongoose
-  .connect("mongodb://localhost/accofinder")
+  .connect(dbUrl, connectionParameters())
   .then(() => {
-    console.log(`Connected to accofinder Database`);
+    console.log('Connected to accofinder Database');
+
     // Drop the index only once on startup (if it exists)
     Listings.collection.indexExists('agent_1')
       .then((exists) => {
         if (exists) {
-          Listings.collection.dropIndex('agent_1', function (err, result) {
+          Listings.collection.dropIndex('agent_1', (err, result) => {
             if (err) {
               console.error('Error dropping index:', err);
             } else {
@@ -35,8 +41,9 @@ mongoose
       });
   })
   .catch((error) => {
-    console.log(`Error: ${error}`);
+    console.error(`Database connection error: ${error}`);
   });
+
 
 // Middleware setup
 app.use(json());

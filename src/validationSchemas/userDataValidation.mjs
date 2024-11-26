@@ -9,7 +9,7 @@ const userDataValidation = {
         },
         isLength:{
             options:{
-                min:5,
+                min:1,
                 max:32
             }
         }
@@ -23,7 +23,7 @@ const userDataValidation = {
         },
         isLength:{
             options:{
-                min:5,
+                min:2,
                 max:32
             }
         }
@@ -37,7 +37,7 @@ const userDataValidation = {
         },
         isLength:{
             options:{
-                min:5,
+                min:1,
                 max:32
             }
         }
