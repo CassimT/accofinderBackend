@@ -24,8 +24,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:d": "nodemon ./src/index.mjs",
-    "start": "node ./src/index.mjs"
+    "start:d": "nodemon ./index.mjs",
+    "start": "node ./index.mjs"
   },
   "keywords": [],
   "author": "",

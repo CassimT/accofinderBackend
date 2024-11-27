@@ -1,11 +1,11 @@
 import express, { json } from "express";
-import routerIndex from "./routes/routerIndex.mjs";
+import routerIndex from "./src/routes/routerIndex.mjs";
 import session from "express-session";
 import passport from "passport";
 import cors from "cors";
 import mongoose from "mongoose";
-import setVisitedMiddleware from "./middlewares/setVisitedMiddleware.mjs";
-import { Listings } from "./dbSchemas/listingSchama.mjs";
+import setVisitedMiddleware from "./src/middlewares/setVisitedMiddleware.mjs";
+import { Listings } from "./src/dbSchemas/listingSchama.mjs";
 
 // Initialize the app
 const app = express();
