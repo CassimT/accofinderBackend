@@ -1,11 +1,11 @@
 import express, { json } from "express";
-import routerIndex from "../src/routes/routerIndex.mjs";
+import routerIndex from "./src/routes/routerIndex.mjs";
 import session from "express-session";
 import passport from "passport";
 import cors from "cors";
 import mongoose from "mongoose";
-import setVisitedMiddleware from "../src/middlewares/setVisitedMiddleware.mjs";
-import { Listings } from "../src/dbSchemas/listingSchama.mjs";
+import setVisitedMiddleware from "./src/middlewares/setVisitedMiddleware.mjs";
+import { Listings } from "./src/dbSchemas/listingSchama.mjs";
 
 // Initialize the app
 const app = express();
@@ -67,8 +67,8 @@ app.use(routerIndex);
 app.use(setVisitedMiddleware);
 
 // Main route
-app.get("/api", (req, res) => {
-  res.json({ message: "Hello from Vercel!" });
+app.get("/", (req, res) => {
+  res.status(200).json({ message: "Hello from Vercel!" });
 });
 
 // Port setup
