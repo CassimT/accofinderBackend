@@ -67,8 +67,8 @@ app.use(routerIndex);
 app.use(setVisitedMiddleware);
 
 // Main route
-app.get("/", (req, res) => {
-  res.send({ msg: "Hello Programmers" });
+app.get("/api", (req, res) => {
+  res.json({ message: "Hello from Vercel!" });
 });
 
 // Port setup
