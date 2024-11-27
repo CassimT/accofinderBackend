@@ -1,11 +1,11 @@
 import express, { json } from "express";
-import routerIndex from "./src/routes/routerIndex.mjs";
+import routerIndex from "../src/routes/routerIndex.mjs";
 import session from "express-session";
 import passport from "passport";
 import cors from "cors";
 import mongoose from "mongoose";
-import setVisitedMiddleware from "./src/middlewares/setVisitedMiddleware.mjs";
-import { Listings } from "./src/dbSchemas/listingSchama.mjs";
+import setVisitedMiddleware from "../src/middlewares/setVisitedMiddleware.mjs";
+import { Listings } from "../src/dbSchemas/listingSchama.mjs";
 
 // Initialize the app
 const app = express();
@@ -74,5 +74,5 @@ app.get("/api", (req, res) => {
 // Port setup
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Connected at port: ${PORT}`);
+  console.log(`Server is running on port ${PORT}`);
 });
