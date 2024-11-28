@@ -24,10 +24,8 @@
   "devDependencies": {
     "nodemon": "^3.1.7"
   },
-  "engine": {
-    "node": "14.x"
-  },
   "scripts": {
+    "build": "echo \"No build necessary\"",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:d": "nodemon ./index.mjs",
     "start": "node ./index.mjs"
