@@ -6,73 +6,72 @@ import cors from "cors";
 import mongoose from "mongoose";
 import setVisitedMiddleware from "./src/middlewares/setVisitedMiddleware.mjs";
 import { Listings } from "./src/dbSchemas/listingSchama.mjs";
+import dotenv from "dotenv";
 
-// Initialize the app
+// Load environment variables
+dotenv.config();
+
 const app = express();
 
-const dbUrl = "mongodb+srv://bedcom2422:9HWIcSeM7AyppOJE@cluster0.ckivv.mongodb.net/accofinder?retryWrites=true&w=majority";
-const connectionParameters = () => ({
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-});
+// Environment Variables
+const dbUrl = process.env.DB_URL;
+const PORT = process.env.PORT || 3000;
 
+// Database Connection
 mongoose
-  .connect(dbUrl, connectionParameters())
+  .connect(dbUrl, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => {
-    console.log('Connected to accofinder Database');
+    console.log("Connected to accofinder Database");
 
-    // Drop the index only once on startup (if it exists)
-    Listings.collection.indexExists('agent_1')
-      .then((exists) => {
-        if (exists) {
-          Listings.collection.dropIndex('agent_1', (err, result) => {
-            if (err) {
-              console.error('Error dropping index:', err);
-            } else {
-              console.log('Index dropped successfully:', result);
-            }
-          });
-        } else {
-          console.log('Index does not exist.');
-        }
-      })
-      .catch((err) => {
-        console.error('Error checking index existence:', err);
-      });
+    // Check and drop index on startup
+    Listings.collection.indexExists("agent_1").then((exists) => {
+      if (exists) {
+        Listings.collection.dropIndex("agent_1", (err, result) => {
+          if (err) {
+            console.error("Error dropping index:", err);
+          } else {
+            console.log("Index dropped successfully:", result);
+          }
+        });
+      } else {
+        console.log("Index does not exist.");
+      }
+    });
   })
   .catch((error) => {
     console.error(`Database connection error: ${error}`);
   });
 
-
-// Middleware setup
+// Middleware
 app.use(json());
 app.use(cors());
+app.use(setVisitedMiddleware); // Place before routes for global middleware
 
-// Session and passport setup
-app.use(session({
-  secret: "mySecret",
-  saveUninitialized: false,
-  resave: false,
-  cookie: {
-    maxAge: 60000 * 2,
-  }
-}));
+// Session and Passport Setup
+app.use(
+  session({
+    secret: "accomodation-finder",
+    saveUninitialized: false,
+    resave: false,
+    cookie: { maxAge: 120000 }, // 2 minutes
+  })
+);
 app.use(passport.initialize());
 app.use(passport.session());
 app.use("/uploads", express.static("uploads"));
 
-// Apply routes after session and passport middleware
+// Routes
 app.use(routerIndex);
-app.use(setVisitedMiddleware);
 
-// Main route
+// Main Route
 app.get("/", (req, res) => {
   res.status(200).json({ message: "Hello from Vercel!" });
 });
 
-// Port setup
-const PORT = process.env.PORT || 3000;
+// Start the Server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
