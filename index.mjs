@@ -45,11 +45,7 @@ mongoose
     console.error(`Database connection error: ${error}`);
   });
 
-// Middleware
-app.use(json());
-app.use(cors());
-app.use(setVisitedMiddleware); // Place before routes for global middleware
-
+// Middleware Order Matters!
 // Session and Passport Setup
 app.use(
   session({
@@ -59,8 +55,13 @@ app.use(
     cookie: { maxAge: 120000 }, // 2 minutes
   })
 );
+
+// Add middleware that relies on the session here
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(setVisitedMiddleware); // Now `req.session` is initialized
+app.use(json());
+app.use(cors());
 app.use("/uploads", express.static("uploads"));
 
 // Routes
@@ -70,7 +71,6 @@ app.use(routerIndex);
 app.get("/", (req, res) => {
   res.status(200).json({ message: "Hello from Vercel!" });
 });
-
 
 // Start the Server
 app.listen(PORT, () => {
