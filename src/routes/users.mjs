@@ -3,7 +3,6 @@ import userDataValidation from "../validationSchemas/userDataValidation.mjs";
 import { User } from "../dbSchemas/userSchema.mjs";
 import { validationResult, matchedData, checkSchema } from "express-validator";
 import { hashPassword } from "../utils/helpers.mjs";
-
 const router = Router();
 
 // Endpoint for registering a new user (student or agent)
