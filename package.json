@@ -24,6 +24,9 @@
   "devDependencies": {
     "nodemon": "^3.1.7"
   },
+  "engines": {
+    "node": "18.x"
+  },
   "scripts": {
     "build": "echo \"No build necessary\"",
     "test": "echo \"Error: no test specified\" && exit 1",
