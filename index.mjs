@@ -5,7 +5,7 @@ import passport from "passport";
 import cors from "cors";
 import mongoose from "mongoose";
 import setVisitedMiddleware from "./src/middlewares/setVisitedMiddleware.mjs";
-import { Listings } from "./src/dbSchemas/listingSchama.mjs";
+import { Listing } from "./src/dbSchemas/listingSchama.mjs";
 import dotenv from "dotenv";
 
 // Load environment variables
@@ -27,9 +27,9 @@ mongoose
     console.log("Connected to accofinder Database");
 
     // Check and drop index on startup
-    Listings.collection.indexExists("agent_1").then((exists) => {
+    Listing.collection.indexExists("agent_1").then((exists) => {
       if (exists) {
-        Listings.collection.dropIndex("agent_1", (err, result) => {
+        Listing.collection.dropIndex("agent_1", (err, result) => {
           if (err) {
             console.error("Error dropping index:", err);
           } else {
