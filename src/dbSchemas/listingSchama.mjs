@@ -62,4 +62,4 @@ const listingSchama = new mongoose.Schema({
 
 },{timestamps: true})
 
-export const Listings = mongoose.model("Listings",listingSchama)
+export const Listing = mongoose.model("Listings",listingSchama)
