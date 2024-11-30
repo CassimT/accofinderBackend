@@ -3,14 +3,12 @@ import { Router } from "express";
 import FormData from "form-data";
 import axios from "axios";
 import { checkSchema, matchedData, validationResult } from "express-validator";
-import paymentDataValidation from "../validationSchemas/paymentDataValidation.mjs";
 import { Order } from "../dbSchemas/orderSchema.mjs";
-import { MobileTransaction } from "../dbSchemas/mobileTransactionSchema.mjs";
 
 const router = Router();
 
 // Airtel pay endpoint
-router.post("/api/aitel-access/mobile/pay", checkSchema(paymentDataValidation), async (req, res) => {
+router.post("/api/aitel-access/mobile/pay", checkSchema(paymentValidationSchema), async (req, res) => {
     const result = validationResult(req);
     if (!result.isEmpty()) return res.status(400).json(result.array());
 
@@ -21,56 +19,96 @@ router.post("/api/aitel-access/mobile/pay", checkSchema(paymentDataValidation), 
     const token = "69601cefcba70cd7766c49ff280a2448"; 
 
     const form = new FormData();
-    form.append("airtel", "1"); 
-    form.append("token", token); 
-    form.append("registration", registration); 
-    form.append("amount", amount); 
-    form.append("phone", phone); 
+    form.append("airtel", "1");
+    form.append("token", token);
+    form.append("registration", registration);
+    form.append("amount", amount);
+    form.append("phone", phone);
 
     const config = {
         method: "post",
         url: "https://api-sandbox.ctechpay.com/student/mobile/", 
         headers: {
             ...form.getHeaders(),
-            'Content-Type': 'multipart/form-data' 
+            'Content-Type': 'multipart/form-data',
         },
-        data: form
+        data: form,
     };
 
     try {
         const response = await axios(config);
-        const { data } = response;
-        const transactionId = data?.data?.transaction?.id;
-        const status = data?.data?.transaction?.status || "PENDING";
 
-        // Save transaction to the database
-        const transaction = new MobileTransaction({
-            transaction_id: transactionId,
-            phone,
-            amount,
-            status,
-        });
+        // Prepare order data for the database
+        const orderData = {
+            transactionId: response.data?.data?.transaction?.id || null,
+            status: response.data?.data?.transaction?.status || "Unknown",
+            amount: amount,
+            phone: phone,
+            responseCode: response.data?.status?.response_code || "Unknown",
+            resultCode: response.data?.status?.result_code || "Unknown",
+            message: response.data?.status?.message || "No message",
+            createdAt: new Date(),
+        };
 
-        await transaction.save();
+        // Save the transaction details in the database
+        const newOrder = new Order(orderData);
+        const savedOrder = await newOrder.save();
 
-        // Respond with transaction details
+        // Send the saved order and API response back to the frontend
         res.status(200).json({
             success: true,
             message: "Payment processed successfully",
-            data: {
-                transaction_id: transactionId,
-                phone,
-                amount,
-                status,
-            },
+            transaction: savedOrder,
+            apiResponse: response.data, // Include the full API response
         });
     } catch (error) {
-        console.error("Error processing payment:", error.message);
+        console.error({ msg: "Error:", error });
 
         res.status(500).json({
             success: false,
             message: "Payment processing failed",
             error: error.message,
+        });
+    }
+});
+
+//SmartCard endpoint
+router.post("/api/aitel-access/order", async (req, res) => {
+    const registration = "BEDCOM2422"; 
+    const token = "69601cefcba70cd7766c49ff280a2448"; 
+    const amount = 100;
+
+    const form = new FormData();
+    form.append("registration", registration);
+    form.append("token", token);
+    form.append("amount", amount);
+
+    const config = {
+        method: "post",
+        maxBodyLength: Infinity,
+        url: "https://api-sandbox.ctechpay.com/student/?endpoint=order",
+        headers: {
+            ...form.getHeaders()
+        },
+        data: form
+    };
+
+    try {
+        const response = await axios.request(config);
+        res.status(200).json({
+            success: true,
+            message: "Order processed successfully",
+            data: response.data
+        });
+
+        //extrating Order_Url
+        //redirectinion to that Url
+    } catch (error) {
+        console.error({ msg: error });
+        res.status(500).json({
+            success: false,
+            message: "Order processing failed",
+            error: error.message
         });
     }
 });
