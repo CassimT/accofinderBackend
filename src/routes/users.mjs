@@ -76,5 +76,28 @@ router.get("/api/users/role/:id", async (request, response) => {
         return response.sendStatus(500);
     }
 });
+//sammary
+router.get("/user-summary/:userId", async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const user = await User.findById(userId).populate("bookings listings");
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+  
+      const summary = {
+        viewers: Math.floor(Math.random() * 100), // Placeholder
+        totalPosted: user.listings.length,
+        booked: user.bookings.length,
+        revenue: user.listings.length * 100, // Placeholder revenue calculation
+      };
+  
+      res.json(summary);
+    } catch (err) {
+      res.status(500).json({ message: "Server error", error: err.message });
+    }
+  });
+  
 
 export default router;
