@@ -3,6 +3,7 @@ import userDataValidation from "../validationSchemas/userDataValidation.mjs";
 import { User } from "../dbSchemas/userSchema.mjs";
 import { validationResult, matchedData, checkSchema } from "express-validator";
 import { hashPassword } from "../utils/helpers.mjs";
+import { Listing } from "../dbSchemas/listingSchama.mjs";
 const router = Router();
 
 // Endpoint for registering a new user (student or agent)
@@ -80,24 +81,40 @@ router.get("/api/users/role/:id", async (request, response) => {
 router.get("/api/user-summary/:userId", async (req, res) => {
     try {
       const { userId } = req.params;
-      const user = await User.findById(userId).populate("bookings listings");
-      
+  
+      // Fetch user with required fields only
+      const user = await User.findById(userId)
+        .populate({
+          path: "listings",
+          select: "price title",
+        })
+        .populate({
+          path: "bookings",
+          select: "hostelname price",
+        });
+  
       if (!user) {
         return res.status(404).json({ message: "User not found" });
       }
   
+      // Calculate revenue based on actual prices (example logic)
+      const revenue = user.listings.reduce((total, listing) => total + (listing.price || 0), 0);
+  
+      // Summary response
       const summary = {
-        viewers: Math.floor(Math.random() * 100), // Placeholder
+        viewers: Math.floor(Math.random() * 100), // Placeholder for now
         totalPosted: user.listings.length,
         booked: user.bookings.length,
-        revenue: user.listings.length * 100, // Placeholder revenue calculation
+        revenue, // Actual revenue calculation
       };
   
-      res.json(summary);
+      res.status(200).json(summary);
     } catch (err) {
+      console.error(`Error fetching user summary: ${err.message}`);
       res.status(500).json({ message: "Server error", error: err.message });
     }
   });
+  
   
 
 export default router;
