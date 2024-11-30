@@ -4,11 +4,13 @@ import FormData from "form-data";
 import axios from "axios";
 import { checkSchema, matchedData, validationResult } from "express-validator";
 import { Order } from "../dbSchemas/orderSchema.mjs";
+import paymentDataValidation from "../validationSchemas/paymentDataValidation.mjs";
+
 
 const router = Router();
 
 // Airtel pay endpoint
-router.post("/api/aitel-access/mobile/pay", checkSchema(paymentValidationSchema), async (req, res) => {
+router.post("/api/aitel-access/mobile/pay", checkSchema(paymentDataValidation), async (req, res) => {
     const result = validationResult(req);
     if (!result.isEmpty()) return res.status(400).json(result.array());
 
