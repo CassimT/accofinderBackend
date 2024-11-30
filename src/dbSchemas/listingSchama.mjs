@@ -1,17 +1,65 @@
 import mongoose from "mongoose";
 
-const listingSchema = new mongoose.Schema({
-    hostelname: { type: String, unique: true, required: true },
-    price: { type: Number, required: true },
-    roomtype: { type: String, required: true },
-    available: { type: Boolean, required: true },
-    rating: { type: Number },
-    review: { type: String },
-    description: { type: String },
-    agent: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    roomimage: { path: String },
-    location: { type: String },
-    distance: { type: Number }, // Changed to Number for numeric distances
-}, { timestamps: true });
+const listingSchama = new mongoose.Schema({
+    hostelname: {
+      type:mongoose.Schema.Types.String,
+      unique:true,
+      required:true  
+    },
+    price:{
+        type:mongoose.Schema.Types.String,
+        required:true
+    },
+    roomtype:{
+        type: mongoose.Schema.Types.String,
+        required: true
 
-export const Listing = mongoose.model("Listing", listingSchema);
+    },
+    available:{
+        type: mongoose.Schema.Types.Boolean,
+        required: true
+    },
+    rating:{
+        type: mongoose.Schema.Types.Number
+    },
+    review:{
+        type: mongoose.Schema.Types.String
+
+    },
+    description: {
+        type: mongoose.Schema.Types.String
+
+    },
+    //phone,email,name and all aget/ladload details
+    agent: {
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'User', 
+        required: true,
+        unique: false, 
+      },
+    //to be removed in future version
+    agentphone: {
+        type: mongoose.Schema.Types.Number
+
+    },
+    //to be removen in future version
+   
+    //to be removed in future version
+    email: {
+        type: mongoose.Schema.Types.String
+
+    },
+    roomimage:{
+        path: String,
+       
+    },
+    location: {
+        type: mongoose.Schema.Types.String
+    },
+    distance: {
+        type: mongoose.Schema.Types.Number
+    }
+
+},{timestamps: true})
+
+export const Listings = mongoose.model("Listings",listingSchama)
