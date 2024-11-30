@@ -77,7 +77,7 @@ router.get("/api/users/role/:id", async (request, response) => {
     }
 });
 //sammary
-router.get("/user-summary/:userId", async (req, res) => {
+router.get("/api/user-summary/:userId", async (req, res) => {
     try {
       const { userId } = req.params;
       const user = await User.findById(userId).populate("bookings listings");
